@@ -64,9 +64,8 @@ export function createStore(config: GameConfig) {
       emit()
     },
     incrementCombo: () => {
-      stats.combo++
+      stats.combo = Math.min(stats.combo + 1, 5)
       stats.maxCombo = Math.max(stats.maxCombo, stats.combo)
-      if (stats.combo > 5) stats.combo = 5
       emit()
     },
     resetCombo: () => { stats.combo = 1; emit() },
@@ -97,7 +96,7 @@ export function createStore(config: GameConfig) {
     isSlowmo: (now: number) => now < effects.slowmoUntil,
     getEffectiveSpeed: (now: number) => {
       const base = config.scrollSpeed * stats.speedMultiplier
-      return store.isSlowmo(now) ? base * config.slowmoFactor : base
+      return now < effects.slowmoUntil ? base * config.slowmoFactor : base
     },
     subscribe: (l: Listener) => { listeners.add(l); return () => listeners.delete(l) },
   }
